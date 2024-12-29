@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Sorteador de Cartas</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f9;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #resultado, #temporizador {
+            font-size: 24px;
+            margin-top: 20px;
+            font-weight: bold;
+            text-align: center;
+        }
+        #imagem-carta {
+            margin-top: 20px;
+            display: none;
+        }
+        .centralizado {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="centralizado">
+        <h1>Sorteador de Cartas</h1>
+        <button onclick="iniciarSorteio()">Sortear Carta</button>
+        <p id="temporizador"></p>
+        <p id="resultado"></p>
+        <img id="imagem-carta" src="" alt="">
+    </div>
+
+    <script>
+        const cartas = [
+            { nome: 'Rei', imagem: 'icons/rei.png' },
+            { nome: 'Dama', imagem: 'icons/dama.png' },
+            { nome: 'Ás', imagem: 'icons/as.png' }
+        ];
+
+        function iniciarSorteio() {
+            let contador = 3;
+            const temporizador = document.getElementById('temporizador');
+            const resultado = document.getElementById('resultado');
+            const imagemCarta = document.getElementById('imagem-carta');
+
+            // Resetar a interface
+            temporizador.innerText = `Sorteando em: ${contador}`;
+            resultado.innerText = '';
+            imagemCarta.style.display = 'none';
+
+            const intervalo = setInterval(() => {
+                contador--;
+                if (contador > 0) {
+                    temporizador.innerText = `Sorteando em: ${contador}`;
+                } else {
+                    clearInterval(intervalo);
+                    sortearCarta();
+                }
+            }, 1000);
+        }
+
+        function sortearCarta() {
+            const cartaSorteada = cartas[Math.floor(Math.random() * cartas.length)];
+            const resultado = document.getElementById('resultado');
+            const imagemCarta = document.getElementById('imagem-carta');
+            const temporizador = document.getElementById('temporizador');
+
+            temporizador.innerText = '';
+            resultado.innerText = `Carta sorteada: ${cartaSorteada.nome}`;
+            imagemCarta.src = cartaSorteada.imagem;
+            imagemCarta.alt = cartaSorteada.nome;
+            imagemCarta.style.display = 'block';
+        }
+
+        if ('serviceWorker' in navigator) { 
+            navigator.serviceWorker.register('/service-worker.js') 
+            .then(function(registration) {
+                console.log('Service Worker registrado com sucesso!', registration);
+            })
+            .catch(function(error) {
+                console.log('Falha ao registrar o Service Worker', error);
+            });
+        }
+    </script>
+</body>
+</html>
